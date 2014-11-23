@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Business Team</title>
+        <link rel="stylesheet" href="css/style.css">
+        <script src="js/jquery.min.js"></script>
+        <script src="js/epargne.js"></script>
+    </head>
+
+    <script type="text/javascript">
+
+    var type = "madelin";
+    var revenu = 100000;
+
+    var retour = calculMeilleureEpargne(revenu, type);
+
+    if (retour.state != 'ok') {
+        alert('error / ' + retour.message);
+    }
+
+    var epargne = retour.data.epargne;
+
+    alert("Revenu : " + revenu + " / type " + type + " : épargne => " + epargne);
+
+    </script>
+
+    <body>
+
+    </body>
+
+</html>
