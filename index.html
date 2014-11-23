@@ -23,6 +23,8 @@
     var revenu = 100000;
     var nombreParents = 1;
     var nombreEnfants = 2;
+    var epargneParMois = 300;
+    var age = 35;
 
 
     // test calculMeilleureEpargne
@@ -44,6 +46,23 @@
     else {
         var part = retour.data.part;
         alert('Part [Parents : ' + nombreParents + '/Enfants : ' + nombreEnfants + '/Type : ' + type + ']  : ' + part);
+    }
+
+    // test calculRenteParAge
+    retour = module.calculRenteParAge(epargneParMois, age);
+    if (retour.state != 'ok') {
+        displayError(retour);
+    }
+    else {
+        var rentes = retour.data.rentes;
+
+        var rentesToStringArray = [];
+        for (var i in rentes) {
+            var rente = rentes[i];
+            rentesToStringArray.push(rente.age + ' => ' + rente.montant);
+        }
+
+        alert('Rente [epargneParMois : ' + epargneParMois + '/Age : ' + age + '] : ' + rentesToStringArray.join(' / '));
     }
 
 

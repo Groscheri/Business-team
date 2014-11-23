@@ -12,7 +12,7 @@ var module = (function () {
     // perp => salarié
     // madelin => professionnel indépendant
     var types = ["perp", "madelin"];
-    var revenues = [20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000, 150000, 200000];
+    var revenus = [20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000, 150000, 200000];
     var epargneParMois = [100, 200, 300, 400, 500, 800, 1000];
     var ages = [30, 35, 40, 45, 50, 55];
     var assiettePerp = [3703,3703,3703,4500,5400,6300,7200,8100,9000,13790,18790];
@@ -57,6 +57,60 @@ var module = (function () {
     */
 
     /*
+    Calcul de la rente en fonction de l'âge - Renvoie la liste des rentes sous forme de tableau d'objets contenant l'age et le montant de la rente
+    @param _epargneParMois montant souhaitant être épargné tous les mois (100, 200, 300, 400, 500, 800 ou 1000)
+    @param _age age à partir duquel doit commencer le calcul (30, 35, 40, 45, 50, 55)
+    @return object with state : 'ok' or 'error'
+    if 'error', object contains 'message' property which can help you debuging
+    if 'ok', object contains 'data' object with 'rentes' property => rentes is an array containing all rentes for all age from _age to 55 / rentes object have 'age' & 'montant' properties
+    */
+    var calculRenteParAge = function (_epargneParMois, _age) {
+        // check epargne
+        // check age
+
+        if (typeof _epargneParMois != 'number') {
+            return { state : 'error', message : 'L\'épargne par mois doit être un nombre. Recu : ' + _epargneParMois + '.'};
+        }
+
+        if (typeof _age != 'number') {
+            return { state : 'error', message : 'L\'age doit être un nombre. Recu : ' + _age + '.'};
+        }
+
+        var indexEpargne = $.inArray(_epargneParMois, epargneParMois);
+
+        if (indexEpargne === -1) {
+            return { state : 'error', message : 'L\'épargne par mois doit être contenu l\'un des nombres suivants : ' + epargneParMois.join(', ') + '. Recu : ' + _epargneParMois + '.'};
+        }
+
+        var indexAge = $.inArray(_age, ages);
+
+        if (indexAge === -1) {
+            return { state : 'error', message : 'L\'age attendu doit être l\'un des nombres suivant : ' + ages.join(', ') + '. Recu : ' + _age + '.'};
+        }
+
+        if (!rente.hasOwnProperty(_age)) {
+            return { state : 'error', message : 'Erreur dans les données : rente. Pas de propriété "' + _age + '" sur l\'objet "rente".' };
+        }
+
+        var rentes = [];
+
+        for (var i = indexAge; i < ages.length; ++i) {
+            age = ages[i];
+            rentes.push({
+                age : age,
+                montant : rente[age][indexEpargne]
+            });
+        }
+
+        return {
+            state : 'ok',
+            data : {
+                rentes : rentes
+            }
+        };
+    }
+
+    /*
     Calcul du nombre de part sur revenu (économie d'impôt maximale atteint dès la première année)
     @param _revenuAnnuelNet revenu annuel net du foyer fiscal
     @param _nombreParents nombre de parents dans le foyer fiscal (1 ou 2)
@@ -64,26 +118,26 @@ var module = (function () {
     @param _type "perp" pour salarié ou "madelin" pour professionnel indépendant
     @return object with state : 'ok' or 'error'
     if 'error', object contains 'message' property which can help you debuging
-    if 'ok', object contains 'data' object with 'epargne' property
+    if 'ok', object contains 'data' object with 'part' property
     */
     var calculNombrePartSurRevenu = function (_revenuAnnuelNet, _nombreParents, _nombreEnfants, _type) {
 
         if (typeof _type != 'string') {
-            return { state : 'error', message : 'Le type de personne doit être une chaine de caractère.'};
+            return { state : 'error', message : 'Le type de personne doit être une chaine de caractère. Recu : ' + _type + '.'};
         }
 
         if (typeof _revenuAnnuelNet != 'number') {
-            return { state : 'error', message : 'Le revenu doit être un nombre.'};
+            return { state : 'error', message : 'Le revenu doit être un nombre. Recu : ' + _revenuAnnuelNet + '.'};
         }
 
         if ($.inArray(_type, types) === -1) {
-            return { state : 'error', message : 'Type inconnu.'};
+            return { state : 'error', message : 'Type inconnu. Les types attendus sont les suivants : ' + types.join(', ') + '. Recu : ' + _type + '.'};
         }
 
-        var index = $.inArray(_revenuAnnuelNet, revenues);
+        var index = $.inArray(_revenuAnnuelNet, revenus);
 
         if (index === -1) {
-            return { state : 'error', message : 'Revenu incorrect.'};
+            return { state : 'error', message : 'Revenu incorrect. Les revenus attendus sont les suivants : ' + revenus.join(', ') + '. Recu : ' + _revenuAnnuelNet + '.'};
         }
 
         var retour = calculPointsFoyerFiscal(_nombreParents, _nombreEnfants);
@@ -116,25 +170,25 @@ var module = (function () {
     var calculMeilleureEpargne = function (_revenuAnnuelNet, _type) {
 
         if (typeof _revenuAnnuelNet != 'number') {
-            return { state : 'error', message : 'Le revenu doit être un nombre.'};
+            return { state : 'error', message : 'Le revenu doit être un nombre. Recu : ' + _revenuAnnuelNet + '.'};
         }
 
         if (typeof _type != 'string') {
-            return { state : 'error', message : 'Le type de personne doit être une chaine de caractère.'};
+            return { state : 'error', message : 'Le type de personne doit être une chaine de caractère. Recu : ' + _type + '.'};
         }
 
         if ($.inArray(_type, types) === -1) {
-            return { state : 'error', message : 'Type inconnu.'};
+            return { state : 'error', message : 'Type inconnu. Les types attendus sont les suivants : ' + types.join(', ') + '. Recu : ' + _type + '.'};
         }
 
-        if ($.inArray(_revenuAnnuelNet, revenues) === -1) {
-            return { state : 'error', message : 'Revenu incorrect.'};
+        if ($.inArray(_revenuAnnuelNet, revenus) === -1) {
+            return { state : 'error', message : 'Revenu incorrect. Les revenus attendus sont les suivants : ' + revenus.join(', ') + '. Recu : ' + _revenuAnnuelNet + '.'};
         }
 
         var data = (type === 'perp') ? assiettePerp : assietteMadelin;
 
-        for (var i in revenues) {
-            if (revenues[i] === _revenuAnnuelNet) {
+        for (var i in revenus) {
+            if (revenus[i] === _revenuAnnuelNet) {
                 return {
                     state : 'ok',
                     data : {
@@ -156,7 +210,7 @@ var module = (function () {
 
     function calculPointsFoyerFiscal (_nombreParents, _nombreEnfants) {
         if (typeof _nombreParents != 'number' || typeof _nombreEnfants != 'number') {
-            return { state : 'error', message : 'Les paramètres doivent être des nombres.'};
+            return { state : 'error', message : 'Les paramètres doivent être des nombres. Recus : ' + _nombreParents + ' et ' + _nombreEnfants + '.'};
         }
 
         if (_nombreParents < 1 || _nombreParents > 2) {
@@ -199,7 +253,7 @@ var module = (function () {
     }
 
     function obtenirIndexParRevenu (_revenu) {
-        return $.inArray(_revenu, revenues);
+        return $.inArray(_revenu, revenus);
     }
 
     /*
@@ -208,7 +262,8 @@ var module = (function () {
 
     return {
         calculMeilleureEpargne : calculMeilleureEpargne,
-        calculNombrePartSurRevenu : calculNombrePartSurRevenu
+        calculNombrePartSurRevenu : calculNombrePartSurRevenu,
+        calculRenteParAge : calculRenteParAge
     }
 
 })();
