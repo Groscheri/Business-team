@@ -64,50 +64,38 @@ var module = (function () {
     if 'error', object contains 'message' property which can help you debuging
     if 'ok', object contains 'data' object with 'rentes' property => rentes is an array containing all rentes for all age from _age to 55 / rentes object have 'age' & 'montant' properties
     */
+
     var calculRenteParAge = function (_epargneParMois, _age) {
-        // check epargne
-        // check age
+        try {
+            var indexEpargne = verifierEpargneParMoisEtObtenirIndex(_epargneParMois);
+            var indexAge = verifierAgeEtObtenirIndex(_age);
 
-        if (typeof _epargneParMois != 'number') {
-            return { state : 'error', message : 'L\'épargne par mois doit être un nombre. Recu : ' + _epargneParMois + '.'};
-        }
+            var rentes = [];
 
-        if (typeof _age != 'number') {
-            return { state : 'error', message : 'L\'age doit être un nombre. Recu : ' + _age + '.'};
-        }
+            for (var i = indexAge; i < ages.length; ++i) {
+                age = ages[i];
+                if (!rente.hasOwnProperty(age)) {
+                    throw 'Erreur dans les données : rente. Pas de propriété "' + age + '" sur l\'objet "rente".';
+                }
 
-        var indexEpargne = $.inArray(_epargneParMois, epargneParMois);
-
-        if (indexEpargne === -1) {
-            return { state : 'error', message : 'L\'épargne par mois doit être contenu l\'un des nombres suivants : ' + epargneParMois.join(', ') + '. Recu : ' + _epargneParMois + '.'};
-        }
-
-        var indexAge = $.inArray(_age, ages);
-
-        if (indexAge === -1) {
-            return { state : 'error', message : 'L\'age attendu doit être l\'un des nombres suivant : ' + ages.join(', ') + '. Recu : ' + _age + '.'};
-        }
-
-        var rentes = [];
-
-        for (var i = indexAge; i < ages.length; ++i) {
-            age = ages[i];
-            if (!rente.hasOwnProperty(age)) {
-                return { state : 'error', message : 'Erreur dans les données : rente. Pas de propriété "' + age + '" sur l\'objet "rente".' };
+                rentes.push({
+                    age : age,
+                    montant : rente[age][indexEpargne]
+                });
             }
-            
-            rentes.push({
-                age : age,
-                montant : rente[age][indexEpargne]
-            });
-        }
 
-        return {
-            state : 'ok',
-            data : {
-                rentes : rentes
+            return {
+                state : 'ok',
+                data : {
+                    rentes : rentes
+                }
+            };
+        } catch (message) {
+            return {
+                state : 'error',
+                message : message
             }
-        };
+        }
     }
 
     /*
@@ -121,42 +109,32 @@ var module = (function () {
     if 'ok', object contains 'data' object with 'part' property
     */
     var calculNombrePartSurRevenu = function (_revenuAnnuelNet, _nombreParents, _nombreEnfants, _type) {
-
-        if (typeof _type != 'string') {
-            return { state : 'error', message : 'Le type de personne doit être une chaine de caractère. Recu : ' + _type + '.'};
-        }
-
-        if (typeof _revenuAnnuelNet != 'number') {
-            return { state : 'error', message : 'Le revenu doit être un nombre. Recu : ' + _revenuAnnuelNet + '.'};
-        }
-
-        if ($.inArray(_type, types) === -1) {
-            return { state : 'error', message : 'Type inconnu. Les types attendus sont les suivants : ' + types.join(', ') + '. Recu : ' + _type + '.'};
-        }
-
-        var index = $.inArray(_revenuAnnuelNet, revenus);
-
-        if (index === -1) {
-            return { state : 'error', message : 'Revenu incorrect. Les revenus attendus sont les suivants : ' + revenus.join(', ') + '. Recu : ' + _revenuAnnuelNet + '.'};
-        }
-
-        var retour = calculPointsFoyerFiscal(_nombreParents, _nombreEnfants);
-        if (retour.state != 'ok') {
-            return retour;
-        }
-        var points = retour.data.points;
-
-        var data = (_type === 'perp') ? perp : madelin;
-        if (!data.hasOwnProperty(points)) {
-            return { state : 'error', message : 'Le calcul des points n\'a pas renvoyé un nombre de points traitable. Points reçus : ' + points + '.'};
-        }
-        
-        return {
-            state : 'ok',
-            data : {
-                part : data[points][index]
+        try {
+            verifierType(_type);
+            var index = verifierRevenuAnnuelNetEtObtenirIndex(_revenuAnnuelNet);
+            var retour = calculPointsFoyerFiscal(_nombreParents, _nombreEnfants);
+            if (retour.state != 'ok') {
+                throw retour.message;
             }
-        };
+            var points = retour.data.points;
+
+            var data = (_type === 'perp') ? perp : madelin;
+            if (!data.hasOwnProperty(points)) {
+                throw 'Le calcul des points n\'a pas renvoyé un nombre de points traitable. Points reçus : ' + points + '.';
+            }
+            
+            return {
+                state : 'ok',
+                data : {
+                    part : data[points][index]
+                }
+            };
+        } catch (message) {
+            return {
+                state : 'error',
+                message : message
+            }
+        }
     }
 
     /*
@@ -168,40 +146,30 @@ var module = (function () {
     if 'ok', object contains 'data' object with 'epargne' property
     */
     var calculMeilleureEpargne = function (_revenuAnnuelNet, _type) {
+        try {
+            verifierType(_type);
+            verifierRevenuAnnuelNet(_revenuAnnuelNet);
 
-        if (typeof _revenuAnnuelNet != 'number') {
-            return { state : 'error', message : 'Le revenu doit être un nombre. Recu : ' + _revenuAnnuelNet + '.'};
-        }
+            var data = (type === 'perp') ? assiettePerp : assietteMadelin;
+            for (var i in revenus) {
+                if (revenus[i] === _revenuAnnuelNet) {
+                    return {
+                        state : 'ok',
+                        data : {
+                            epargne : Math.round(data[i]/12)
+                        }
+                    };
+                }
+            }
 
-        if (typeof _type != 'string') {
-            return { state : 'error', message : 'Le type de personne doit être une chaine de caractère. Recu : ' + _type + '.'};
-        }
+            throw 'impossible to get there';
 
-        if ($.inArray(_type, types) === -1) {
-            return { state : 'error', message : 'Type inconnu. Les types attendus sont les suivants : ' + types.join(', ') + '. Recu : ' + _type + '.'};
-        }
-
-        if ($.inArray(_revenuAnnuelNet, revenus) === -1) {
-            return { state : 'error', message : 'Revenu incorrect. Les revenus attendus sont les suivants : ' + revenus.join(', ') + '. Recu : ' + _revenuAnnuelNet + '.'};
-        }
-
-        var data = (type === 'perp') ? assiettePerp : assietteMadelin;
-
-        for (var i in revenus) {
-            if (revenus[i] === _revenuAnnuelNet) {
-                return {
-                    state : 'ok',
-                    data : {
-                        epargne : Math.round(data[i]/12)
-                    }
-                };
+        } catch (message) {
+            return {
+                state : 'error',
+                message : message
             }
         }
-
-        return {
-            state : 'error',
-            message : 'impossible to get there'
-        };
     }
 
     /*
@@ -209,51 +177,114 @@ var module = (function () {
     */
 
     function calculPointsFoyerFiscal (_nombreParents, _nombreEnfants) {
-        if (typeof _nombreParents != 'number' || typeof _nombreEnfants != 'number') {
-            return { state : 'error', message : 'Les paramètres doivent être des nombres. Recus : ' + _nombreParents + ' et ' + _nombreEnfants + '.'};
-        }
+        try {
+            verifierFoyerFiscal(_nombreParents, _nombreEnfants);
 
-        if (_nombreParents < 1 || _nombreParents > 2) {
-            return { state : 'error', message : 'Il ne peut y avoir qu\'un ou deux parent(s). Nombre reçu : ' + _nombreParents + '.'};
-        }
+            // 0 => 0
+            // 1 => 0.5
+            // 2 => 1
+            // 3 => 2
+            // 4 et + => 3
+            var pointsParents = _nombreParents;
+            var pointsEnfants = 0;
 
-        if (_nombreEnfants < 0) {
-            return { state : 'error', message : 'Le nombre d\'enfants ne peut pas être négatif. Nombre reçu : ' + _nombreEnfants + '.'};
-        }
+            if (_nombreEnfants == 1) {
+                pointsEnfants = 0.5;
+            }
+            else if (_nombreEnfants > 1 && _nombreEnfants < 5) {
+                pointsEnfants = _nombreEnfants - 1;
+            }
+            else if (_nombreEnfants >= 5) {
+                pointsEnfants = 3;
+            }
+            else {
+                pointsEnfants = 0;
+            }
 
-        // 0 => 0
-        // 1 => 0.5
-        // 2 => 1
-        // 3 => 2
-        // 4 et + => 3
-        var pointsParents = _nombreParents;
-        var pointsEnfants = 0;
+            var points = pointsEnfants + pointsParents;
 
-        if (_nombreEnfants == 1) {
-            pointsEnfants = 0.5;
-        }
-        else if (_nombreEnfants > 1 && _nombreEnfants < 5) {
-            pointsEnfants = _nombreEnfants - 1;
-        }
-        else if (_nombreEnfants >= 5) {
-            pointsEnfants = 3;
-        }
-        else {
-            pointsEnfants = 0;
-        }
-
-        var points = pointsEnfants + pointsParents;
-
-        return {
-            state : 'ok',
-            data : {
-                points : points
+            return {
+                state : 'ok',
+                data : {
+                    points : points
+                }
+            }
+        } catch (message) {
+            return {
+                state : 'error',
+                message : message
             }
         }
     }
 
     function obtenirIndexParRevenu (_revenu) {
         return $.inArray(_revenu, revenus);
+    }
+
+    function verifierType (_type) {
+        if (typeof _type != 'string') {
+            throw 'Le type de personne doit être une chaine de caractère. Recu : ' + _type + '.';
+        }
+
+        if ($.inArray(_type, types) === -1) {
+            throw 'Type inconnu. Les types attendus sont les suivants : ' + types.join(', ') + '. Recu : ' + _type + '.';
+        }
+    }
+
+    function verifierRevenuAnnuelNet (_revenuAnnuelNet) {
+        if (typeof _revenuAnnuelNet != 'number') {
+            throw 'Le revenu doit être un nombre. Recu : ' + _revenuAnnuelNet + '.';
+        }
+        if ($.inArray(_revenuAnnuelNet, revenus) === -1) {
+            throw 'Revenu incorrect. Les revenus attendus sont les suivants : ' + revenus.join(', ') + '. Recu : ' + _revenuAnnuelNet + '.';
+        }
+    }
+
+    function verifierRevenuAnnuelNetEtObtenirIndex (_revenuAnnuelNet) {
+        if (typeof _revenuAnnuelNet != 'number') {
+            throw 'Le revenu doit être un nombre. Recu : ' + _revenuAnnuelNet + '.';
+        }
+        var index = $.inArray(_revenuAnnuelNet, revenus);
+        if (index === -1) {
+            throw 'Revenu incorrect. Les revenus attendus sont les suivants : ' + revenus.join(', ') + '. Recu : ' + _revenuAnnuelNet + '.';
+        }
+        return index;
+    }
+
+    function verifierFoyerFiscal (_nombreParents, _nombreEnfants) {
+        if (typeof _nombreParents != 'number' || typeof _nombreEnfants != 'number') {
+            throw 'Les paramètres doivent être des nombres. Recus : ' + _nombreParents + ' et ' + _nombreEnfants + '.';
+        }
+
+        if (_nombreParents < 1 || _nombreParents > 2) {
+            throw 'Il ne peut y avoir qu\'un ou deux parent(s). Nombre reçu : ' + _nombreParents + '.';
+        }
+
+        if (_nombreEnfants < 0) {
+            throw 'Le nombre d\'enfants ne peut pas être négatif. Nombre reçu : ' + _nombreEnfants + '.';
+        }
+    }
+
+    function verifierAgeEtObtenirIndex (_age) {
+        if (typeof _age != 'number') {
+            throw 'L\'age doit être un nombre. Recu : ' + _age + '.';
+        }
+        var index = $.inArray(_age, ages);
+        if (index === -1) {
+            throw 'L\'age attendu doit être l\'un des nombres suivant : ' + ages.join(', ') + '. Recu : ' + _age + '.';
+        }
+        return index;
+    }
+
+    function verifierEpargneParMoisEtObtenirIndex (_epargneParMois) {
+        if (typeof _epargneParMois != 'number') {
+            throw 'L\'épargne par mois doit être un nombre. Recu : ' + _epargneParMois + '.';
+        }
+        var index = $.inArray(_epargneParMois, epargneParMois);
+        if (index === -1) {
+           throw 'L\'épargne par mois doit être contenu l\'un des nombres suivants : ' + epargneParMois.join(', ') + '. Recu : ' + _epargneParMois + '.';
+        }
+        return index;
     }
 
     /*
