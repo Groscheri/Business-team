@@ -1,10 +1,4 @@
 var module = (function () {
-
-    /*
-    TODO :
-    - calculRenteParAge(_epargneParMois, _age) => renvoie la liste des rentes à partir de _age pour chaque âge multiple de 5 (30 => 55)
-    */
-
     /*
     Data
     */
