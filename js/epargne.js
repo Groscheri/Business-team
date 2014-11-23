@@ -1,6 +1,11 @@
 var module = (function () {
 
     /*
+    TODO :
+    - calculRenteParAge(_epargneParMois, _age) => renvoie la liste des rentes à partir de _age pour chaque âge multiple de 5 (30 => 55)
+    */
+
+    /*
     Data
     */
 
@@ -8,11 +13,13 @@ var module = (function () {
     // madelin => professionnel indépendant
     var types = ["perp", "madelin"];
     var revenues = [20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000, 150000, 200000];
+    var epargneParMois = [100, 200, 300, 400, 500, 800, 1000];
+    var ages = [30, 35, 40, 45, 50, 55];
     var assiettePerp = [3703,3703,3703,4500,5400,6300,7200,8100,9000,13790,18790];
     var assietteMadelin = [3755,3755,4368,6868,9368,11868,14368,16868,19368,31868,44368];
 
     /*
-     part => rente
+     part => nombre part sur revenu
     */
     var perp = {
         1 : [700,577,1111,1350,1620,1890,2226,3321,3690,5654,8456],
@@ -34,7 +41,19 @@ var module = (function () {
     };
 
     /*
-    Public function
+     rente
+    */
+    var rente = {
+        30 : [231,463,694,926,1157,1852,2315],
+        35 : [185,370,555,740,924,1479,1849],
+        40 : [145,289,434,578,723,1156,1445],
+        45 : [109,219,328,438,547,876,1095],
+        50 : [79,158,237,315,395,631,789],
+        55 : [52,104,156,208,261,417,521]
+    };
+
+    /*
+     Public function
     */
 
     /*
@@ -184,7 +203,7 @@ var module = (function () {
     }
 
     /*
-    return public functions
+     return public functions
     */
 
     return {
