@@ -9,23 +9,23 @@
     </head>
 
     <script type="text/javascript">
+    /*
+        TO READ :
+        Object module contains all public functions we need
+        Liste des fonctions utiles :
+            - module.calculMeilleureEpargne(_revenu, _type)
+            - module.calculNombrePartSurRevenu(_revenu, _nombreParents, _nombreEnfants, _type)
+        Voir les commentaires dans epargne.js pour plus de détails sur les paramètres et le retour des fonctions.
+    */
 
-    // object module contains all public functions we need
-
-    function displayError(error) {
-        if (error.hasOwnProperty('message')) {
-            alert('Error : ' + error.message);
-        }
-        else {
-            alert('Unknown error !');
-        }
-    }
-
+    // data de tests
     var type = "madelin";
     var revenu = 100000;
     var nombreParents = 1;
     var nombreEnfants = 2;
 
+
+    // test calculMeilleureEpargne
     var retour = module.calculMeilleureEpargne(revenu, type);
     if (retour.state != 'ok') {
         displayError(retour);
@@ -35,6 +35,8 @@
         alert("Revenu : " + revenu + " / type " + type + " : épargne => " + epargne);
     }
 
+
+    // test calculNombrePartSurRevenu
     retour = module.calculNombrePartSurRevenu (revenu, nombreParents, nombreEnfants, type);
     if (retour.state != 'ok') {
         displayError(retour);
@@ -44,12 +46,16 @@
         alert('Part [Parents : ' + nombreParents + '/Enfants : ' + nombreEnfants + '/Type : ' + type + ']  : ' + part);
     }
 
-    /*
-        Liste des fonctions utiles :
-            - module.calculMeilleureEpargne(_revenu, _type)
-            - module.calculNombrePartSurRevenu(_revenu, _nombreParents, _nombreEnfants, _type)
-        Voir les commentaires dans epargne.js pour plus de détails sur les paramètres et le retour des fonctions.
-    */
+
+    // utils functions
+    function displayError(error) {
+        if (error.hasOwnProperty('message')) {
+            alert('Error : ' + error.message);
+        }
+        else {
+            alert('Unknown error !');
+        }
+    }
 
     </script>
 
