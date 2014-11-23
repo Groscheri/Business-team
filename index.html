@@ -10,18 +10,39 @@
 
     <script type="text/javascript">
 
-    var type = "madelin";
-    var revenu = 100000;
+    // object module contains all public functions we need
 
-    var retour = calculMeilleureEpargne(revenu, type);
-
-    if (retour.state != 'ok') {
-        alert('error / ' + retour.message);
+    function displayError(error) {
+        if (error.hasOwnProperty('message')) {
+            alert('Error : ' + error.message);
+        }
+        else {
+            alert('Unknown error !');
+        }
     }
 
-    var epargne = retour.data.epargne;
+    var type = "madelin";
+    var revenu = 100000;
+    var nombreParents = 1;
+    var nombreEnfants = 2;
 
-    alert("Revenu : " + revenu + " / type " + type + " : épargne => " + epargne);
+    var retour = module.calculMeilleureEpargne(revenu, type);
+    if (retour.state != 'ok') {
+        displayError(retour);
+    }
+    else {
+        var epargne = retour.data.epargne;
+        alert("Revenu : " + revenu + " / type " + type + " : épargne => " + epargne);
+    }
+
+    retour = module.calculNombrePartSurRevenu (revenu, nombreParents, nombreEnfants, type);
+    if (retour.state != 'ok') {
+        displayError(retour);
+    }
+    else {
+        var part = retour.data.part;
+        alert('Part [Parents : ' + nombreParents + '/Enfants : ' + nombreEnfants + '/Type : ' + type + ']  : ' + part);
+    }
 
     </script>
 
