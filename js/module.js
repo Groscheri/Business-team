@@ -88,14 +88,14 @@ var module = (function () {
             return { state : 'error', message : 'L\'age attendu doit être l\'un des nombres suivant : ' + ages.join(', ') + '. Recu : ' + _age + '.'};
         }
 
-        if (!rente.hasOwnProperty(_age)) {
-            return { state : 'error', message : 'Erreur dans les données : rente. Pas de propriété "' + _age + '" sur l\'objet "rente".' };
-        }
-
         var rentes = [];
 
         for (var i = indexAge; i < ages.length; ++i) {
             age = ages[i];
+            if (!rente.hasOwnProperty(age)) {
+                return { state : 'error', message : 'Erreur dans les données : rente. Pas de propriété "' + age + '" sur l\'objet "rente".' };
+            }
+            
             rentes.push({
                 age : age,
                 montant : rente[age][indexEpargne]
