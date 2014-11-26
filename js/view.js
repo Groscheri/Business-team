@@ -52,15 +52,3 @@ function calculRenteParAge (_epargneParMois, _age) {
 function getData() {
     return module.data;
 }
-
-console.log(getData());
-
-function displayError(error) {
-    // traitement pour la gestion des erreurs (affichage particulier à voir)
-    if (error.hasOwnProperty('message')) {
-        alert('Error : ' + error.message);
-    }
-    else {
-        alert('Unknown error !');
-    }
-}

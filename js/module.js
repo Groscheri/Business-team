@@ -159,7 +159,7 @@ var module = (function () {
             verifierType(_type);
             verifierRevenuAnnuelNet(_revenuAnnuelNet);
 
-            var data = (type === 'perp') ? assiettePerp : assietteMadelin;
+            var data = (_type === 'perp') ? assiettePerp : assietteMadelin;
             for (var i in revenus) {
                 if (revenus[i] === _revenuAnnuelNet) {
                     return {

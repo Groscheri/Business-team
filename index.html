@@ -1,12 +1,31 @@
 <!DOCTYPE html>
-<html>
+<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if IE 9 ]><html class="ie ie9" lang="en"> <![endif]-->
+<html class=" js no-touch csstransforms csstransitions" style="" lang="en">
     <head>
-        <meta charset="UTF-8">
-        <title>Business Team</title>
-        <link rel="stylesheet" href="css/style.css">
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+
+        <!-- My CSS-->
+        <link href="./css/style.css" rel="stylesheet">
+        <link href="./css/menu.css" rel="stylesheet">
+        <link href="./css/styleBoutons.css" rel="stylesheet">
+        <!-- End of my CSS-->
+
+        <!-- jQuery -->
         <script src="js/jquery.min.js"></script>
+        <!-- Fin jQuery -->
+
+        <!-- Bootstrap-->
+        <link href="./addons/bootstrap/css/bootstrap.css" rel="stylesheet">
+        <link href="./addons/bootstrap/css/bootstrap-theme.css" rel="stylesheet">
+        <script src="./addons/bootstrap/js/bootstrap.js"></script>
+        <!-- Fin bootstrap-->
+
         <script src="js/module.js"></script>
         <script src="js/view.js"></script>
+
+        <title>Simulateur de retraites</title>
     </head>
 
     <script type="text/javascript">
@@ -20,69 +39,194 @@
         Voir les commentaires dans module.js pour plus de détails sur les paramètres et le retour des fonctions.
     */
 
-    // data de tests
-    var type = "madelin";
-    var revenu = 100000;
-    var nombreParents = 1;
-    var nombreEnfants = 3;
-    var epargneParMois = 300;
-    var age = 35;
+    $(function () {
 
-
-    // test calculMeilleureEpargne
-    var retour = module.calculMeilleureEpargne(revenu, type);
-    if (retour.state != 'ok') {
-        displayError(retour);
-    }
-    else {
-        var epargne = retour.data.epargne;
-        alert("Revenu : " + revenu + " / type " + type + " : épargne => " + epargne);
-    }
-
-
-    // test calculNombrePartSurRevenu
-    retour = module.calculNombrePartSurRevenu (revenu, nombreParents, nombreEnfants, type);
-    if (retour.state != 'ok') {
-        displayError(retour);
-    }
-    else {
-        var part = retour.data.part;
-        alert('Part [Parents : ' + nombreParents + '/Enfants : ' + nombreEnfants + '/Type : ' + type + ']  : ' + part);
-    }
-
-    // test calculRenteParAge
-    retour = module.calculRenteParAge(epargneParMois, age);
-    if (retour.state != 'ok') {
-        displayError(retour);
-    }
-    else {
-        var rentes = retour.data.rentes;
-
-        var rentesToStringArray = [];
-        for (var i in rentes) {
-            var rente = rentes[i];
-            rentesToStringArray.push(rente.age + ' => ' + rente.montant);
+        // init view
+        var debug = $('#debug');
+        function log(_message) {
+            if (typeof _message == 'string') {
+                var date = new Date();
+                var heure = date.getHours();
+                var minute = date.getMinutes();
+                var seconde = date.getSeconds();
+                var dateString = heure + ':' + minute + ':' + seconde;
+                debug.append('(' + dateString + ') ' + _message + '<br />');
+            }
         }
 
-        alert('Rente [epargneParMois : ' + epargneParMois + '/Age : ' + age + '] : ' + rentesToStringArray.join(' / '));
-    }
+        function clear() {
+            debug.empty();
+        }
+
+        function displayError(error, _stack) {
+            // traitement pour la gestion des erreurs (affichage particulier à voir)
+            var suffixe = '';
+            if (_stack) {
+                suffixe = '<br />' + new Error().stack;
+            }
+
+            if (error.hasOwnProperty('message')) {
+                log('Error : ' + error.message + '' + suffixe);
+            }
+            else {
+                log('Unknown error ! ' + suffixe);
+            }
+        }
+
+        // data de tests
+        var type = "madelin";
+        var revenu = 100000;
+        var nombreParents = 1;
+        var nombreEnfants = 3;
+        var epargneParMois = 300;
+        var age = 35;
 
 
-    // utils functions
-    function displayError(error) {
-        if (error.hasOwnProperty('message')) {
-            alert('Error : ' + error.message);
+        // test calculMeilleureEpargne
+        var retour = module.calculMeilleureEpargne(revenu, type);
+        if (retour.state != 'ok') {
+            displayError(retour, true);
         }
         else {
-            alert('Unknown error !');
+            var epargne = retour.data.epargne;
+            log("Revenu : " + revenu + " / type " + type + " : épargne => " + epargne);
         }
-    }
+        
+        // test calculNombrePartSurRevenu
+        retour = module.calculNombrePartSurRevenu (revenu, nombreParents, nombreEnfants, type);
+        if (retour.state != 'ok') {
+            displayError(retour);
+        }
+        else {
+            var part = retour.data.part;
+            log('Part [Parents : ' + nombreParents + '/Enfants : ' + nombreEnfants + '/Type : ' + type + ']  : ' + part);
+        }
+
+        // test calculRenteParAge
+        retour = module.calculRenteParAge(epargneParMois, age);
+        if (retour.state != 'ok') {
+            displayError(retour);
+        }
+        else {
+            var rentes = retour.data.rentes;
+
+            var rentesToStringArray = [];
+            for (var i in rentes) {
+                var rente = rentes[i];
+                rentesToStringArray.push(rente.age + ' => ' + rente.montant);
+            }
+
+            log('Rente [epargneParMois : ' + epargneParMois + '/Age : ' + age + '] : ' + rentesToStringArray.join(' / '));
+        }
+    });
 
     </script>
 
     <body>
 
-        <!-- Faire la vue ici -->
+        <!--Debut entete-->
+        <header>
+            <div class="container">
+                <div class="row"><!--Menu principal-->
+                    <div class="col-md-5 col-xs-5">
+                        <a href="accueil.html" title="Simulateur">Simulateur</a>
+                    </div>
+                    <div class="col-md-5 col-xs-5">
+                        <ul id="lemenu" class="menubleu">
+                            <li>
+                                <a href="">Mon compte</a>
+                            </li>
+                            <li>
+                            <a class="" href="#">Lien1</a>
+                            <ul style="">
+                                <li>
+                                    <a href="">Services</a>
+                                </li>
+                                <li>
+                                    <a href="">Programs</a>
+                                </li>
+                            </ul>
+                            </li>
+                            <li>
+                                <a href="">Blabla</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div><!--Fin menu principal du haut-->
+            </div><!--Fin container-->
+        </header>
+        <!--Fin entete-->
+
+        <!--Debut page principale-->
+        <!--Banniere-->
+        <div id="banniere" style="color:white">Blabla <br/>Blabla <br/>Blabla <br/></div>
+        <br/>
+
+        <!--Boutons-->
+        <div class="container">
+            <div class="row">
+                <div class="col-md-2"></div>
+                <div class="col-md-4 col-xs-12">
+                    <div class="box_calculator">
+                        <a href="">
+                        <img alt="" src="">
+                        <h3>Votre profil</h3>
+                        <p>Salarié ou professionnel indépendant ?</p>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="col-md-4 col-xs-12">
+                    <div class="box_calculator">
+                        <a href="">
+                        <img alt="" src="">
+                        <h3>Revenu annuel</h3>
+                        <p>Quel est votre revenu annuel brut ?</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-2"></div>
+                <div class="col-md-4 col-xs-12">
+                    <div class="box_calculator">
+                        <a href="">
+                        <img alt="" src="">
+                        <h3>Foyer fiscal</h3>
+                        <p>Comment est composé votre foyer fiscal ?</p>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-md-4 col-xs-12">
+                    <div class="box_calculator">
+                        <a href="">
+                        <img alt="" src="">
+                        <h3>Epargne</h3>
+                        <p>Quel montant souhaitez-vous épargner par mois ?</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4"></div>
+                <div class="col-md-4 col-xs-12">
+                    <div class="box_calculator">
+                        <a href="">
+                        <img alt="" src="">
+                        <h3>Age</h3>
+                        <p>Dans quelle tranche d'âge vous trouvez-vous ?</p>
+                        </a>
+                    </div>
+                </div>
+            
+            </div>
+        </div>
+
+        <div class="row">
+            <span class="col-md-offset-1 col-md-10 alert alert-warning"><u>Debug</u> :<br />
+                <span id="debug"></span>
+            </span>
+        </div>
 
     </body>
 
