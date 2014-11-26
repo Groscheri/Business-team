@@ -47,6 +47,21 @@ var module = (function () {
     };
 
     /*
+     Public data
+    */
+    var data = {
+        types : types,
+        revenus : revenus,
+        epargneParMois : epargneParMois,
+        ages : ages,
+        assiettePerp : assiettePerp,
+        assietteMadelin : assietteMadelin,
+        perp : perp,
+        madelin : madelin,
+        rente : rente
+    };
+
+    /*
      Public function
     */
 
@@ -286,6 +301,7 @@ var module = (function () {
     */
 
     return {
+        data : data,
         calculMeilleureEpargne : calculMeilleureEpargne,
         calculNombrePartSurRevenu : calculNombrePartSurRevenu,
         calculRenteParAge : calculRenteParAge
