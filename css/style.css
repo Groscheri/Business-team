@@ -5,18 +5,12 @@
 }
 
 .titreBlanc {
-	font-size:28px;
-	margin-left:5em;
+	font-size:24px;
 	font-weight:bold;
-	text-shadow: 4px 2px black;
-}
+	text-shadow: 4px 3px black;
+	padding-top: 100px;
 
-@media screen and (min-width: 200px) and (max-width: 640px) {
-  .titreBlanc {
-    display:block;
-    clear:both;
-  }
-}
+
 
 .box {
     position: relative;
