@@ -6,7 +6,7 @@
 
 
 /* Applying same to the keys */
-.keys span {
+.keys {
     float: left;
     position: relative;
     top: 0;
@@ -34,7 +34,7 @@
 }
 
 /* Simulating "pressed" effect on active state of the keys by removing the box-shadow and moving the keys down a bit */
-.keys span:active {
+.keys:active {
     box-shadow: 0px 0px #6b54d3;
     top: 4px;
 }
