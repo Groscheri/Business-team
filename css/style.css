@@ -4,6 +4,20 @@
 	height:260px;
 }
 
+.titreBlanc {
+	font-size:28px;
+	margin-left:5em;
+	font-weight:bold;
+	text-shadow: 4px 2px black;
+}
+
+@media screen and (min-width: 200px) and (max-width: 640px) {
+  .titreBlanc {
+    display:block;
+    clear:both;
+  }
+}
+
 
 /* Applying same to the keys */
 .keys {
