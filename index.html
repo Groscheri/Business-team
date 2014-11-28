@@ -20,6 +20,7 @@
 
         <!-- Slider -->
         <script src="./addons/rangeslider/rangeslider.min.js"></script>
+        <link rel="stylesheet" href="./addons/rangeslider/rangeslider.css">
         <!-- Fin Slider -->
 
         <!-- Bootstrap-->
@@ -55,13 +56,13 @@
 
             <div class="row">
                 <div class="col-md-offset-1 col-md-5 col-xs-6">
-                    <div class="keys">
+                    <div class="keys" id="type_perp">
                         <h2><span class="fa fa-user"></span> Salarié</h2>
                     </div>
                 </div>
 
                 <div class="col-md-5 col-xs-6">
-                    <div class="keys">
+                    <div class="keys" id="type_madelin">
                         <h2><span class="fa fa-user"></span> Professionnel indépendant</h2>
                     </div>
                 </div>
@@ -73,76 +74,19 @@
                         <h2><span class="fa fa-money"></span> Revenu annuel</h2>
                         <p>Quel est votre revenu annuel brut ?<br /></p>
 
-                        <div class="row">
-                            <div class="col-md-2">
-                                <div class="keys">
-                                    20.000
-                                </div>
-                            </div>
+                        <input id="inputEpargne" type="range" min="0" max="10" step="1">
+                        <br />
+                        <span id="revenu_value"></span> <span class="fa fa-eur"></span>
 
-                            <div class="col-md-2">
-                                <div class="keys">
-                                    30.000
-                                </div>
-                            </div>
-
-                            <div class="col-md-2">
-                                <div class="keys">
-                                    40.000
-                                </div>
-                            </div>
-
-                            <div class="col-md-2">
-                                <div class="keys">
-                                    50.000
-                                </div>
-                            </div>
-
-                            <div class="col-md-2">
-                                <div class="keys">
-                                    60.000
-                                </div>
-                            </div>
-
-                            <div class="col-md-2">
-                                <div class="keys">
-                                    70.000
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-2">
-                                <div class="keys">
-                                    80.000
-                                </div>
-                            </div>
-
-                            <div class="col-md-2">
-                                <div class="keys">
-                                    90.000
-                                </div>
-                            </div>
-
-                            <div class="col-md-2">
-                                <div class="keys">
-                                    100.000
-                                </div>
-                            </div>
-
-                            <div class="col-md-2">
-                                <div class="keys">
-                                    150.000
-                                </div>
-                            </div>
-
-                            <div class="col-md-2">
-                                <div class="keys">
-                                    200.000
-                                </div>
-                            </div>
-
-                        </div>
                     </div>
+                </div>
+            </div>
+
+            <br />
+
+            <div class="row">
+                <div class="col-md-offset-1 col-md-10 col-xs-12">
+                    <div class="alert alert-info" id="meilleureEpargne" style="display:none;"></div>
                 </div>
             </div>
 
@@ -154,12 +98,12 @@
                         <p>Combien êtes-vous de parent(s) ?</p>
                         <div class="row">
                             <div class="col-md-offset-2 col-md-4">
-                                <div class="keys">
+                                <div class="keys foyer_parent" data-value="1">
                                     1 parent
                                 </div>
                             </div>
                             <div class="col-md-4">
-                                <div class="keys">
+                                <div class="keys foyer_parent" data-value="2">
                                     2 parents
                                 </div>
                             </div>
@@ -170,27 +114,33 @@
                         <p>Combien avez-vous d'enfants ?</p>
 
                         <div class="row">
-                            <div class="col-md-offset-2 col-md-2">
-                                <div class="keys">
+                            <div class="col-md-offset-1 col-md-2">
+                                <div class="keys foyer_enfant" data-value="0">
                                     0 enfant
                                 </div>
                             </div>
 
                             <div class="col-md-2">
-                                <div class="keys">
+                                <div class="keys foyer_enfant" data-value="1">
                                     1 enfant
                                 </div>
                             </div>
 
                             <div class="col-md-2">
-                                <div class="keys">
+                                <div class="keys foyer_enfant" data-value="2">
                                     2 enfants
                                 </div>
                             </div>
 
                             <div class="col-md-2">
-                                <div class="keys">
-                                    3 enfants ou +
+                                <div class="keys foyer_enfant" data-value="3">
+                                    3 enfants
+                                </div>
+                            </div>
+
+                            <div class="col-md-2">
+                                <div class="keys foyer_enfant" data-value="4">
+                                    4 enfants ou +
                                 </div>
                             </div>
                         </div>
@@ -202,7 +152,7 @@
 
             <div class="row">
                 <div class="col-md-offset-1 col-md-10 col-xs-12">
-                    <div class="alert alert-info">Vous pouvez épargner XXX€ par mois !</div>
+                    <div class="alert alert-danger" id="economieImpot" style="display:none;"></div>
                 </div>
             </div>
 
@@ -212,52 +162,9 @@
                         <h2><span class="fa fa-eur"></span> Epargne</h2>
                         <p>Quel montant souhaitez-vous épargner par mois ?</p>
 
-                        <div class="row">
-                            <div class="col-md-3">
-                                <div class="keys">
-                                    100
-                                </div>
-                            </div>
-
-                            <div class="col-md-3">
-                                <div class="keys">
-                                    200
-                                </div>
-                            </div>
-
-                            <div class="col-md-3">
-                                <div class="keys">
-                                    300
-                                </div>
-                            </div>
-
-                            <div class="col-md-3">
-                                <div class="keys">
-                                    400
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="keys">
-                                    500
-                                </div>
-                            </div>
-
-                            <div class="col-md-4">
-                                <div class="keys">
-                                    800
-                                </div>
-                            </div>
-
-                            <div class="col-md-4">
-                                <div class="keys">
-                                    1000
-                                </div>
-                            </div>
-
-                        </div>
+                        <input id="inputEpargneParMois" type="range" min="0" max="6" step="1">
+                        <br />
+                        <span id="epargneParMois_value"></span> <span class="fa fa-eur"></span>
 
                     </div>
                 </div>
@@ -271,37 +178,37 @@
 
                         <div class="row">
                             <div class="col-md-2">
-                                <div class="keys">
+                                <div class="keys age" data-value="30">
                                     30
                                 </div>
                             </div>
 
                             <div class="col-md-2">
-                                <div class="keys">
+                                <div class="keys age" data-value="35">
                                     35
                                 </div>
                             </div>
 
                             <div class="col-md-2">
-                                <div class="keys">
+                                <div class="keys age" data-value="40">
                                     40
                                 </div>
                             </div>
 
                             <div class="col-md-2">
-                                <div class="keys">
+                                <div class="keys age" data-value="45">
                                     45
                                 </div>
                             </div>
 
                             <div class="col-md-2">
-                                <div class="keys">
+                                <div class="keys age" data-value="50">
                                     50
                                 </div>
                             </div>
 
                             <div class="col-md-2">
-                                <div class="keys">
+                                <div class="keys age" data-value="55">
                                     55
                                 </div>
                             </div>
@@ -309,6 +216,14 @@
                         </div>
 
                     </div>
+                </div>
+            </div>
+
+            <br />
+
+            <div class="row">
+                <div class="col-md-offset-1 col-md-10 col-xs-12">
+                    <div class="alert alert-warning" id="rente" style="display:none;"></div>
                 </div>
             </div>
 

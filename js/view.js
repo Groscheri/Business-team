@@ -10,8 +10,21 @@ $(function () {
         Voir les commentaires dans module.js pour plus de détails sur les paramètres et le retour des fonctions.
     */
 
+    /*
+        DATA :
+            - types
+            - revenus 
+            - epargneParMois
+            - ages
+            - assiettePerp
+            - assietteMadelin
+            - perp
+            - madelin
+            - rente
+    */
+
     // set to false not to display message anymore
-    var DEBUG = true;
+    var DEBUG = false;
 
     // some tests
     function tests () {
@@ -43,7 +56,118 @@ $(function () {
         debug.parent().remove();
     }
 
-    // utils functions
+
+    /* INIT */
+    var type = "";
+    var revenu = 0;
+    var nombreParents = 0;
+    var nombreEnfants = -1;
+    var epargneParMois = 0;
+    var age = 0;
+
+    // init type
+    $('#type_perp').on('click', function () {
+        type = 'perp';
+        calculMeilleureEpargne(revenu, type);
+        calculNombrePartSurRevenu(revenu, nombreParents, nombreEnfants, type);
+    });
+
+    $('#type_madelin').on('click', function () {
+        type = 'madelin';
+        calculMeilleureEpargne(revenu, type);
+        calculNombrePartSurRevenu(revenu, nombreParents, nombreEnfants, type);
+    });
+
+    // init foyer
+    $('.foyer_parent').each(function () {
+        $(this).on('click', function () {
+            try {
+                nombreParents = parseInt($(this).data('value'));
+                calculNombrePartSurRevenu(revenu, nombreParents, nombreEnfants, type);
+            }
+            catch (e) {
+
+            }
+        });
+    });
+
+    $('.foyer_enfant').each(function () {
+        $(this).on('click', function () {
+            try {
+                nombreEnfants = parseInt($(this).data('value'));
+                calculNombrePartSurRevenu(revenu, nombreParents, nombreEnfants, type);
+            }
+            catch (e) {
+
+            }
+        });
+    });
+
+    $('#debug').on('click', function () {
+        alert('parents : ' + nombreParents + ' / enfants : ' + nombreEnfants);
+    });
+
+    // init sliders
+    $('#inputEpargne').rangeslider({
+        polyfill : false,
+        rangeClass: 'rangeslider',
+        fillClass: 'rangeslider__fill',
+        handleClass: 'rangeslider__handle',
+
+        onInit: function() {},
+        onSlide: function(position, value) { 
+            // value est la valeur qui nous intéresse
+            var revenus = getData().revenus;
+            if (revenus.hasOwnProperty(value)) {
+                revenu = revenus[value];
+                $('#revenu_value').html(revenu);
+                calculMeilleureEpargne(revenu, type);
+                calculNombrePartSurRevenu(revenu, nombreParents, nombreEnfants, type);
+            }
+        },
+        onSlideEnd: function(position, value) {}
+    });
+
+    $('#inputEpargneParMois').rangeslider({
+        polyfill : false,
+        rangeClass: 'rangeslider',
+        fillClass: 'rangeslider__fill',
+        handleClass: 'rangeslider__handle',
+
+        onInit: function() {},
+        onSlide: function(position, value) { 
+            // value est la valeur qui nous intéresse
+            var _epargneParMois = getData().epargneParMois;
+            if (_epargneParMois.hasOwnProperty(value)) {
+                epargneParMois = _epargneParMois[value];
+                $('#epargneParMois_value').html(epargneParMois);
+                calculRenteParAge (epargneParMois, age);
+            }
+        },
+        onSlideEnd: function(position, value) {}
+    });
+
+    // init age
+    $('.age').each(function () {
+        $(this).on('click', function () {
+            try {
+                age = parseInt($(this).data('value'));
+                calculRenteParAge (epargneParMois, age);
+            }
+            catch (e) {
+
+            }
+        });
+    });
+
+
+
+
+
+
+
+
+    /* UTILS */
     function log(_message) {
         if (typeof _message == 'string') {
             var date = new Date();
@@ -84,6 +208,10 @@ $(function () {
 
     // link modele to view
     function calculMeilleureEpargne (_revenu, _type) {
+        if (_revenu == 0 || _type == '') {
+            return;
+        }
+
         var retour = module.calculMeilleureEpargne(_revenu, _type);
         if (retour.state != 'ok') {
             displayError(retour);
@@ -94,11 +222,17 @@ $(function () {
             if (DEBUG) {
                 log("Revenu : " + _revenu + " / type " + _type + " : épargne => " + epargne);
             }
-            
+            var meilleureEpargne = $('#meilleureEpargne');
+            meilleureEpargne.show();
+            meilleureEpargne.html('Vous pouvez épargner <strong>' + epargne + '€</strong> par mois !');
         }
     }
 
     function calculNombrePartSurRevenu (_revenu, _nombreParents, _nombreEnfants, _type) {
+        if (_revenu == 0 || _nombreParents == 0 || _nombreEnfants == -1 || _type == "") {
+            return;
+        }
+
         var retour = module.calculNombrePartSurRevenu (_revenu, _nombreParents, _nombreEnfants, _type);
         if (retour.state != 'ok') {
             displayError(retour);
@@ -109,10 +243,18 @@ $(function () {
             if (DEBUG) {
                 log('Part [Parents : ' + _nombreParents + '/Enfants : ' + _nombreEnfants + '/Type : ' + _type + ']  : ' + part);
             }
+            var economieImpot = $('#economieImpot');
+            economieImpot.show();
+            economieImpot.html('Votre économie d\'impôts maximale dès la 1<sup>ère</sup> année pourrait atteindre : <strong>' + part + '€</strong>');
         }
     }
 
     function calculRenteParAge (_epargneParMois, _age) {
+        if (_epargneParMois == 0 || _age == 0) {
+            alert('age ' + _age + ' / epm ' + _epargneParMois);
+            return;
+        }
+
         var retour = module.calculRenteParAge(_epargneParMois, _age);
         if (retour.state != 'ok') {
             displayError(retour);
@@ -128,6 +270,28 @@ $(function () {
             // }
             // ...
 
+            var renteDOM = $('#rente');
+            var html = 'Si vous épargnez <strong>' + _epargneParMois + '€</strong> par mois à partir de <strong>' + _age + ' ans</strong>, vous allez gagner tous les mois un complément de ressource à vie de :';
+            html += '<table class="table table-bordered" style="text-align:center;">';
+            html += '<tr>';
+            for (var i in rentes) {
+                var rente = rentes[i];
+                html += '<td>' + rente.age + '</td>';
+            }
+            html += '</tr>';
+
+            html += '<tr>';
+            for (var i in rentes) {
+                var rente = rentes[i];
+                html += '<td>' + rente.montant + '€</td>';
+            }
+            html += '</tr>';
+
+            html += '</table>';
+            renteDOM.show();
+            renteDOM.html(html);
+
+            // debug
             var rentesToStringArray = [];
             for (var i in rentes) {
                 var rente = rentes[i];
