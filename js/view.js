@@ -251,7 +251,6 @@ $(function () {
 
     function calculRenteParAge (_epargneParMois, _age) {
         if (_epargneParMois == 0 || _age == 0) {
-            alert('age ' + _age + ' / epm ' + _epargneParMois);
             return;
         }
 
