@@ -1,0 +1,8 @@
+Pour la bannière, nous gardons l'image des retraités, cela fait banque.
+
+Pour les input non numériques, nous utiliserons les boutons de la calculatrice trouvable au lien suivant : http://thecodeplayer.com/walkthrough/javascript-css3-calculator
+
+Pour les input numériques, on fera aussi des clics numériques comme expliqué précédemment.
+
+Probleme des parents / enfants :
+Il faut sélectionner le nombre de parents, pour débloquer la sélection d'enfants.
