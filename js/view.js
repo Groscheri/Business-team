@@ -70,12 +70,18 @@ $(function () {
         type = 'perp';
         calculMeilleureEpargne(revenu, type);
         calculNombrePartSurRevenu(revenu, nombreParents, nombreEnfants, type);
+		
+		$('#type_madelin').removeClass('keysSelected');
+		$(this).addClass('keysSelected');
     });
 
     $('#type_madelin').on('click', function () {
         type = 'madelin';
         calculMeilleureEpargne(revenu, type);
         calculNombrePartSurRevenu(revenu, nombreParents, nombreEnfants, type);
+		
+		$('#type_perp').removeClass('keysSelected');
+		$(this).addClass('keysSelected');
     });
 
     // init foyer
@@ -84,6 +90,10 @@ $(function () {
             try {
                 nombreParents = parseInt($(this).data('value'));
                 calculNombrePartSurRevenu(revenu, nombreParents, nombreEnfants, type);
+				$('.foyer_parent').each(function () {
+					$(this).removeClass('keysSelected');
+				});
+				$(this).addClass('keysSelected');
             }
             catch (e) {
 
@@ -96,6 +106,10 @@ $(function () {
             try {
                 nombreEnfants = parseInt($(this).data('value'));
                 calculNombrePartSurRevenu(revenu, nombreParents, nombreEnfants, type);
+				$('.foyer_enfant').each(function () {
+					$(this).removeClass('keysSelected');
+				});
+				$(this).addClass('keysSelected');
             }
             catch (e) {
 
@@ -153,6 +167,10 @@ $(function () {
             try {
                 age = parseInt($(this).data('value'));
                 calculRenteParAge (epargneParMois, age);
+				$('.age').each(function () {
+					$(this).removeClass('keysSelected');
+				});
+				$(this).addClass('keysSelected');
             }
             catch (e) {
 
