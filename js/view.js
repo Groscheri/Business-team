@@ -134,7 +134,7 @@ $(function () {
             var revenus = getData().revenus;
             if (revenus.hasOwnProperty(value)) {
                 revenu = revenus[value];
-                $('#revenu_value').html(revenu);
+                $('#revenu_value').html('<b>' + formatte(revenu.toString()) + '</b>');
                 calculMeilleureEpargne(revenu, type);
                 calculNombrePartSurRevenu(revenu, nombreParents, nombreEnfants, type);
             }
@@ -154,7 +154,7 @@ $(function () {
             var _epargneParMois = getData().epargneParMois;
             if (_epargneParMois.hasOwnProperty(value)) {
                 epargneParMois = _epargneParMois[value];
-                $('#epargneParMois_value').html(epargneParMois);
+                $('#epargneParMois_value').html('<b>' + formatte(epargneParMois.toString()) + '</b>');
                 calculRenteParAge (epargneParMois, age);
             }
         },
@@ -242,7 +242,7 @@ $(function () {
             }
             var meilleureEpargne = $('#meilleureEpargne');
             meilleureEpargne.show();
-            meilleureEpargne.html('Vous pouvez épargner <strong>' + epargne + '€</strong> par mois !');
+            meilleureEpargne.html('Vous pouvez épargner <strong>' + formatte(epargne.toString()) + '€</strong> par mois !');
         }
     }
 
@@ -263,7 +263,7 @@ $(function () {
             }
             var economieImpot = $('#economieImpot');
             economieImpot.show();
-            economieImpot.html('Votre économie d\'impôts maximale dès la 1<sup>ère</sup> année pourrait atteindre : <strong>' + part + '€</strong>');
+            economieImpot.html('Votre économie d\'impôts maximale dès la 1<sup>ère</sup> année pourrait atteindre : <strong>' + formatte(part.toString()) + '€</strong>');
         }
     }
 
@@ -288,7 +288,7 @@ $(function () {
             // ...
 
             var renteDOM = $('#rente');
-            var html = 'Si vous épargnez <strong>' + _epargneParMois + '€</strong> par mois à partir de <strong>' + _age + ' ans</strong>, vous allez gagner tous les mois un complément de ressource à vie de :';
+            var html = 'Si vous épargnez <strong>' + formatte(_epargneParMois.toString()) + '€</strong> par mois à partir de <strong>' + _age + ' ans</strong>, vous allez gagner tous les mois un complément de ressource à vie de :';
             html += '<table class="table table-bordered" style="text-align:center;">';
             html += '<tr>';
             for (var i in rentes) {
@@ -300,7 +300,7 @@ $(function () {
             html += '<tr>';
             for (var i in rentes) {
                 var rente = rentes[i];
-                html += '<td>' + rente.montant + '€</td>';
+                html += '<td>' + formatte(rente.montant.toString()) + '€</td>';
             }
             html += '</tr>';
 
@@ -320,4 +320,27 @@ $(function () {
             }
         }
     }
+	
+	function formatte(valeur){
+ 
+		if (isNaN(valeur.split(' ').join(''))){
+			return false;
+		}
+		 
+		var valeurformate =new Array()
+		var tempval=valeur.split('.')
+		valeur=tempval[0].split(' ').join('')
+		valeur=valeur.split('').reverse() 
+		 
+		var i=0
+		while(i<valeur.length){
+		 
+		 valeurformate.push( (valeur[i+2]?valeur[i+2]:'') + (valeur[i+1]?valeur[i+1]:'') + valeur[i] );
+		 i=i+3;
+		}
+		 
+		valeurformate=valeurformate.reverse().join(' ') +( tempval[1]?tempval[1].length>0?'.'+tempval[1]:'':'');
+		return valeurformate
+	}
+
 });
